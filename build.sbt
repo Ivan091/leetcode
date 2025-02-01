@@ -1,4 +1,4 @@
-name := "scala-with-cats"
+name := "leetcode"
 scalaVersion := "3.4.0"
 
 Global / fork := true
