@@ -1,17 +1,50 @@
-object Solution {
-  def jump(nums: Array[Int]): Int = {
-    def mainLoop(jcnt: Int): List[Int] => Int = {
-      case Nil      => jcnt
-      case _ :: Nil => jcnt
-      case l @ _ :: xs =>
-        def loop(d: Int, maxD: Int): List[Int] => Int = {
-          case Nil              => maxD
-          case x :: xs if x >= d => loop(d + 1, d)(xs)
-          case x :: xs          => loop(d + 1, maxD)(xs)
-        }
-        val skip = loop(0, 0)(l)
-        mainLoop(jcnt + 1)(l.drop(skip))
+import java.util
+import scala.util.Random
+
+class RandomizedSet() {
+
+  val innerVector = new util.ArrayList[Int]()
+  val innerMap = new util.HashMap[Int, Int]()
+  val rnd = new Random()
+
+  def insert(`val`: Int): Boolean = {
+    if (innerMap.containsKey(`val`)) {
+      false
+    } else {
+      innerVector.add(`val`)
+      innerMap.put(`val`, innerVector.size() - 1)
+      true
     }
-    mainLoop(0)(nums.reverse.toList)
+  }
+
+  def remove(`val`: Int): Boolean = {
+    if (innerMap.containsKey(`val`)) {
+      val index = innerMap.get(`val`)
+      if (index == innerVector.size() - 1) {
+        innerVector.remove(innerVector.size() - 1)
+      } else {
+        val prev = innerVector.get(innerVector.size() - 1)
+        innerMap.put(prev, index)
+        innerVector.set(index, innerVector.get(innerVector.size() - 1))
+        innerVector.remove(innerVector.size() - 1)
+      }
+      innerMap.remove(`val`)
+      true
+    } else {
+      false
+    }
+  }
+
+  def getRandom(): Int = {
+    val idx = rnd.nextInt(innerVector.size())
+    innerVector.get(idx)
   }
 }
+
+/**
+ * Your RandomizedSet object will be instantiated and called as such:
+ * val obj = new RandomizedSet()
+ * val param_1 = obj.insert(`val`)
+ * val param_2 = obj.remove(`val`)
+ * val param_3 = obj.getRandom()
+ */
