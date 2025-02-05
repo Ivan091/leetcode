@@ -1,13 +1,17 @@
 import org.scalatest.matchers.should.Matchers
-import org.scalatest.prop.Tables.Table
-import org.scalatest.propspec.AnyPropSpec
-import org.scalatest.Inspectors.forAll
 import org.scalatest.wordspec.AnyWordSpec
 
 final class Test extends AnyWordSpec with Matchers {
 
-  "straight" in {
-    Solution.hIndex(Array(3,0,6,1,5)) shouldBe 3
-    Solution.hIndex(Array(1,3,1)) shouldBe 1
-  } 
+  "simple" in {
+    Solution.productExceptSelf(Array(1, 2, 3)) shouldBe Array(6, 3, 2)
+  }
+
+  "two" in {
+    Solution.productExceptSelf(Array(5, 10)) shouldBe Array(10, 5)
+  }
+
+  "fail 1" in {
+    Solution.productExceptSelf(Array(2, 3, 5, 0)) shouldBe Array(0, 0, 0, 30)
+  }
 }

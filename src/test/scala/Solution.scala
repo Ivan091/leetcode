@@ -1,50 +1,35 @@
 import java.util
-import scala.util.Random
+import scala.annotation.tailrec
 
-class RandomizedSet() {
+object Solution {
+  def productExceptSelf(nums: Array[Int]): Array[Int] = {
 
-  val innerVector = new util.ArrayList[Int]()
-  val innerMap = new util.HashMap[Int, Int]()
-  val rnd = new Random()
+    val result = util.Arrays.copyOf(nums, nums.length)
 
-  def insert(`val`: Int): Boolean = {
-    if (innerMap.containsKey(`val`)) {
-      false
-    } else {
-      innerVector.add(`val`)
-      innerMap.put(`val`, innerVector.size() - 1)
-      true
-    }
-  }
-
-  def remove(`val`: Int): Boolean = {
-    if (innerMap.containsKey(`val`)) {
-      val index = innerMap.get(`val`)
-      if (index == innerVector.size() - 1) {
-        innerVector.remove(innerVector.size() - 1)
-      } else {
-        val prev = innerVector.get(innerVector.size() - 1)
-        innerMap.put(prev, index)
-        innerVector.set(index, innerVector.get(innerVector.size() - 1))
-        innerVector.remove(innerVector.size() - 1)
+    @tailrec
+    def loop1(idx: Int)(p: Int): Unit = {
+      if (idx < nums.length) {
+        val newP = nums(idx) * p
+        nums.update(idx, newP)
+        loop1(idx + 1)(newP)
       }
-      innerMap.remove(`val`)
-      true
-    } else {
-      false
     }
-  }
+    loop1(0)(1)
 
-  def getRandom(): Int = {
-    val idx = rnd.nextInt(innerVector.size())
-    innerVector.get(idx)
+    def loop2(idx: Int)(p: Int): Unit = {
+      if (idx == result.length - 1) {
+        val newP = p * result(idx)
+        result.update(idx, nums(idx - 1))
+        loop2(idx - 1)(newP)
+      } else if (idx == 0) {
+        result.update(0, p)
+      } else {
+        val newP = p * result(idx)
+        result.update(idx, nums(idx - 1) * p)
+        loop2(idx - 1)(newP)
+      }
+    }
+    loop2(result.length - 1)(1)
+    result
   }
 }
-
-/**
- * Your RandomizedSet object will be instantiated and called as such:
- * val obj = new RandomizedSet()
- * val param_1 = obj.insert(`val`)
- * val param_2 = obj.remove(`val`)
- * val param_3 = obj.getRandom()
- */
