@@ -5,7 +5,7 @@ final class Test extends AnyWordSpec with Matchers {
 
   "simple" in {
     println{
-      Solution.canCompleteCircuit(Array(1, 2, 3, 4, 5), Array(3, 4, 5, 1, 2))
+      Solution.candy(Array(1,2,2))
     }
   }
 
