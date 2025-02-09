@@ -1,41 +1,29 @@
-import scala.annotation.tailrec
-import scala.collection.immutable.SortedMap
-import scala.math.Ordering.Implicits.*
-
 object Solution {
-  def candy(ratings: Array[Int]): Int = {
-    if (ratings.isEmpty) { 0 }
-    else if (ratings.length == 1) { 1 }
-    else {
-      val result = new Array[Int](ratings.length)
-      val len = ratings.length
+  def trap(height: Array[Int]): Int = {
+    
+    def max: List[(Int, Int)] => List[(Int, Int)] = l => l.sortBy { case (h, _) => -h }
 
-      val valuesWithIndexes = SortedMap.from(ratings.toVector.zipWithIndex.groupBy(_._1).view.mapValues(_.map(_._2)))
-
-      def maxAround(i: Int) = {
-        if (i == 0) {
-          if (ratings(i + 1) == ratings(i)) 1 else result(i + 1) + 1
-        } else if (i == len - 1) {
-          if (ratings(i - 1) == ratings(i)) 1 else result(i - 1) + 1
-        } else {
-          val right = if (ratings(i + 1) == ratings(i)) 1 else result(i + 1) + 1
-          val left = if (ratings(i - 1) == ratings(i)) 1 else result(i - 1) + 1
-          math.max(right, left)
-        }
+    def calcPeaks: List[(Int, Int)] => Int = { list =>
+      def calcPeaksInternal(acc: Int, li: Int, ri: Int): List[(Int, Int)] => Int = {
+        case Nil => acc
+        case x -> xi :: xs if xi >= ri =>
+          val waterLevel = math.min(x, height(ri))
+          val waterVolume = Range.inclusive(ri + 1, xi - 1).foldLeft(0) { case (acc, h) => acc + waterLevel - height(h) }
+          calcPeaksInternal(acc + waterVolume, li, xi)(xs)
+        case x -> xi :: xs if xi <= li =>
+          val waterLevel = math.min(x, height(li))
+          val waterVolume = Range.inclusive(xi + 1, li - 1).foldLeft(0) { case (acc, h) => acc + waterLevel - height(h) }
+          calcPeaksInternal(acc + waterVolume, xi, ri)(xs)
+        case x -> xi :: xs => calcPeaksInternal(acc, li, ri)(xs)
       }
 
-      @tailrec
-      def loop(map: SortedMap[Int, Vector[Int]]): Unit = {
-        if (map.nonEmpty) {
-          val (minV, minIs) = map.min
-          minIs.foreach(i => result.update(i, maxAround(i)))
-          loop(map - minV)
-        }
+      println(list)
+      list match {
+        case Nil           => 0
+        case p -> pi :: xs => calcPeaksInternal(0, pi, pi)(xs)
       }
-
-      loop(valuesWithIndexes)
-
-      result.sum
     }
+
+    (calcPeaks compose max)(height.toList.zipWithIndex)
   }
 }
