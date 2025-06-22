@@ -3,15 +3,26 @@ import org.scalatest.wordspec.AnyWordSpec
 
 final class Test extends AnyWordSpec with Matchers {
 
-  "simple" in {
-    Solution.trap(Array(1, 2, 1, 3, 2, 2, 4, 3)) shouldBe 3
-  }
-
   "ex1" in {
-    Solution.trap(Array(0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1)) shouldBe 6
+    val f = new MedianFinder()
+    f.addNum(1)
+    f.addNum(2)
+    f.findMedian() shouldEqual 1.5
+    f.addNum(3)
+    f.findMedian() shouldEqual 2.0
   }
 
-  "ex2" in {
-    Solution.trap(Array(4, 2, 0, 3, 2, 5)) shouldBe 9
+  "pass 4" in {
+    val f = new MedianFinder()
+    f.addNum(-1)
+    f.findMedian() shouldEqual -1
+    f.addNum(-2)
+    f.findMedian() shouldEqual -1.5
+    f.addNum(-3)
+    f.findMedian() shouldEqual -2
+    f.addNum(-4)
+    f.findMedian() shouldEqual -2.5
+    f.addNum(-5)
+    f.findMedian() shouldEqual -3
   }
 }
